@@ -9,13 +9,13 @@ from pathlib import Path
 
 class FileChangeHandler(FileSystemEventHandler):
 
-    def __init__(self, log_file, max_path_length=40):
+    def __init__( self, log_file, max_path_length=40 ):
 
         self.log_file        = log_file
         self.max_path_length = max_path_length
         self.file_sizes      = {}     # prevent duplicate CHANGED events
         
-    def _write_log_entry(self, event_type, src_path, dest_path=None):
+    def _write_log_entry( self, event_type, src_path, dest_path = None ):
 
         """Write a log entry to the beginning of the file"""
 
@@ -41,7 +41,7 @@ class FileChangeHandler(FileSystemEventHandler):
         with open(self.log_file, 'w') as f:
             f.write(entry + content)
 
-    def on_created(self, event):
+    def on_created( self, event ):
 
         if not event.is_directory:
 
@@ -53,7 +53,7 @@ class FileChangeHandler(FileSystemEventHandler):
 
             self._write_log_entry("NEW", event.src_path)
 
-    def on_modified(self, event):
+    def on_modified( self, event ):
 
         if not event.is_directory:
 
@@ -69,13 +69,13 @@ class FileChangeHandler(FileSystemEventHandler):
             except OSError:
                 pass  # File might be gone already
 
-    def on_deleted(self, event):
+    def on_deleted( self, event ):
 
         if not event.is_directory:
             self.file_sizes.pop(event.src_path, None)  # Remove from tracking
             self._write_log_entry("DELETE", event.src_path)
 
-    def on_moved(self, event):
+    def on_moved( self, event ):
 
         if not event.is_directory:
             # Track file sizes to prevent duplicate CHANGED events
@@ -94,8 +94,8 @@ class FileChangeHandler(FileSystemEventHandler):
                 # Different directory = move
                 self._write_log_entry("MOVED", event.src_path, event.dest_path)
 
-    def _format_path(self, path):
-        
+    def _format_path( self, path ):
+
         """Format path to have a maximum length, adding ... at the start if needed"""
         
         path_str = str(path)
@@ -103,7 +103,7 @@ class FileChangeHandler(FileSystemEventHandler):
             return path_str
         return f"...{path_str[-(self.max_path_length-3):]}"
 
-def monitor_directory(path, log_file):
+def monitor_directory( path, log_file ):
 
     """Start monitoring a dir for changes"""
 
