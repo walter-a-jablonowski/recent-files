@@ -1,7 +1,11 @@
 
 - [-] Rename has only the new file name
-- [ ] Duplicate entries in log file for some reason (or filter)
-  - maybe file size doesn't change, chage it in file or json
+- Duplicate entries in log file for some reason
+
+  - [x] maybe compare file size doesn't change, change it in file, json or .sys
+
+    - In-Memory Dictionary `self.file_sizes = {}  # path -> size`
+
 - [ ] MOVE doesn't work instead a DELETE NEW CHANGED is logged
 - [ ] Shorten log file if too long
 
@@ -10,7 +14,27 @@ Advanced
 ---------------------------------------------------------
 
 - Converting Python Code to a Standalone APK
-- C++ variant if needed for performance
+
+### Problem with duplicate log entries
+
+AI: When you rename a file, it typically triggers 2 events
+
+- A MOVED/RENAMED event (which we handle as RENAMED in our code)
+- A MODIFIED event (which we handle as CHANGED in our code)
+
+The MODIFIED event occurs because many file systems update certain metadata (like last modified time) when a file is renamed, even though the content hasn't changed. This is particularly common on Windows systems
+
+- [ ] Instead of comparing file sizes to filter out duplicate log entries we could use hash (more precise)
+- [ ] also remember betweenn runs (maybe unneeded unless we have similar problems)
+
+  - json in app folder (sqlite cause of performance ?)
+  - .sys/fil_chgs/duplicates_cache.json
+  - less good (unreadable)
+    ```
+    Su  0126 11:04  NEW      .../file.txt  [size:1234]  source: c:/full/.../...
+    ```
+
+### C++ variant if needed for performance
 
 ```c
 HANDLE hDir = CreateFile(
