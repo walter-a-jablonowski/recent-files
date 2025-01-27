@@ -13,15 +13,8 @@ class FileChangeHandler(FileSystemEventHandler):
         self.log_file = log_file
         self.max_path_length = max_path_length
         
-    def _format_path(self, path):
-        """Format path to have a maximum length, adding ... at the start if needed"""
-        path_str = str(path)
-        if len(path_str) <= self.max_path_length:
-            return path_str
-        return f"...{path_str[-(self.max_path_length-3):]}"
-    
     def _write_log_entry(self, event_type, src_path, dest_path=None):
-        """Write a formatted log entry to the beginning of the file"""
+        """Write a log entry to the beginning of the file"""
         now = datetime.now()
         day = now.strftime("%a")[:2]  # Get first 2 chars of weekday name
         date_time = now.strftime("%m%d %H:%M")
@@ -66,8 +59,15 @@ class FileChangeHandler(FileSystemEventHandler):
                 # Different directory = move
                 self._write_log_entry("MOVED", event.src_path, event.dest_path)
 
+    def _format_path(self, path):
+        """Format path to have a maximum length, adding ... at the start if needed"""
+        path_str = str(path)
+        if len(path_str) <= self.max_path_length:
+            return path_str
+        return f"...{path_str[-(self.max_path_length-3):]}"
+
 def monitor_directory(path, log_file):
-    """Start monitoring a directory for changes"""
+    """Start monitoring a dir for changes"""
     # Create absolute paths
     abs_path = os.path.abspath(path)
     abs_log_file = os.path.abspath(log_file)
@@ -82,9 +82,9 @@ def monitor_directory(path, log_file):
     observer = Observer()
     observer.schedule(event_handler, abs_path, recursive=True)
     
-    print(f"Starting file system monitor for: {abs_path}")
+    print(f"Starting file sys changes for: {abs_path}")
     print(f"Log file: {abs_log_file}")
-    print("Press Ctrl+C to stop monitoring")
+    print("Press Ctrl+C to ecit")
     
     observer.start()
     try:
@@ -97,7 +97,7 @@ def monitor_directory(path, log_file):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python file_monitor.py <directory_to_monitor> <log_file>")
+        print("Usage: python file_sys_chg.py <dir> <log_file>")
         sys.exit(1)
         
     monitor_directory(sys.argv[1], sys.argv[2])

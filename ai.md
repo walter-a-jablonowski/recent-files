@@ -18,5 +18,5 @@ Fields
 - Day of week: Mo-Su
 - Date time:   MMDD HH:MM (skip the year)
 - Type of change
-- File path: cause we have long paths we only save a certain amount of chars , and abbreviate with "..." in front
+- File path: cause we have long paths we only save a certain amount of chars, and abbreviate with "..." in front
 - some entries use am arrow and a second gile path as seen in the samples above

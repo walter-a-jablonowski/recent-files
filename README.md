@@ -18,10 +18,8 @@ Su  0126 11:00  DELETE   .../my/sub/fld/file.txt
 ```bash
 pip install -r requirements.txt
 python file_sys_chg.py <base_dir> <log_file>
-python file_sys_chg.py "debug" "file_changes.log"
+python file_sys_chg.py "debug" "file_changes.log"  # exit CRL C
 ```
-
-Press Ctrl+C to stop monitoring
 
 
 ## License

@@ -1,8 +1,9 @@
 
-- [ ] MOVE doesn't work instead a DELETE NEW CHANGED is logged
-- [ ] Rename only the new file name
-- [ ] Shorten file if too long
+- [-] Rename has only the new file name
 - [ ] Duplicate entries in log file for some reason (or filter)
+  - maybe file size doesn't change, chage it in file or json
+- [ ] MOVE doesn't work instead a DELETE NEW CHANGED is logged
+- [ ] Shorten log file if too long
 
 
 Advanced
