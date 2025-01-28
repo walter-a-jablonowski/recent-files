@@ -15,6 +15,7 @@ Su  0126 11:00  DELETE   .../my/sub/fld/file.txt
   - some duplicates may appear in log
 - **Current**
   - also observe dir changes
+  - simplified members, merge all kind of duplicates
 
 ## Usage
 
