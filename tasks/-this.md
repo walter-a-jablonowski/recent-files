@@ -3,17 +3,20 @@
 - Duplicate entries in log file for some reason
 
   - [x] maybe compare file size doesn't change, change it in file, json or .sys
-
     - In-Memory Dictionary `self.file_sizes = {}  # path -> size`
 
-- [ ] MOVE doesn't work instead a DELETE NEW CHANGED is logged
+- [ ] MOVE doesn't work instead a DELETE NEW is logged
+
+    - solved the simple way (undone)
+    - maybe event simpler: just merge log entries if DELETE NEW with same file name appear in log
+
 - [ ] Shorten log file if too long
 
 
 Advanced
 ---------------------------------------------------------
 
-- Converting Python Code to a Standalone APK
+- [ ] maybe Python Code to a Standalone APK
 
 ### Problem with duplicate log entries
 
