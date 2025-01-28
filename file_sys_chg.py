@@ -85,7 +85,7 @@ class FileChangeHandler( FileSystemEventHandler ):
       
       if os.path.dirname(event.src_path) == os.path.dirname(event.dest_path):
         self._write_log_entry("RENAMED", event.src_path, event.dest_path)  # Same dir = rename
-      else:
+      else:  # TASK: this doesn't work on win
         self._write_log_entry("MOVED", event.src_path, event.dest_path)    # different dir = move
 
   def _format_path( self, path ):
