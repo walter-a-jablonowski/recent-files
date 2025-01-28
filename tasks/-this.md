@@ -20,7 +20,7 @@ Advanced
 
 ### Problem with duplicate log entries
 
-see [dev](-this.md)
+see [../dev](-this.md)
 
 - [ ] Instead of comparing file sizes to filter out duplicate log entries we could use hash (more precise)
 - [ ] also remember betweenn runs (maybe unneeded unless we have similar problems)

@@ -25,7 +25,7 @@ python file_sys_chg.py "debug" "file_changes.log"  # exit CRL C
 
 ## Dev
 
-see [dev](tasks/dev.md)
+see [dev](dev.md)
 
 ## License
 

@@ -13,7 +13,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
     self.log_file        = log_file
     self.max_path_length = max_path_length
-    self.file_sizes      = {}  # Fix: Track file sizes to prevent duplicate CHANGED events
+    self.file_sizes      = {}  # fix: prevent duplicates (see dev.md)
     
   def _write_log_entry( self, event_type, src_path, dest_path = None ):
 
@@ -43,11 +43,11 @@ class FileChangeHandler( FileSystemEventHandler ):
 
     if not event.is_directory:
 
-      # Fix: Track file sizes to prevent duplicate CHANGED events
+      # Fix: prevent duplicates (see dev.md)
       try:
         self.file_sizes[event.src_path] = os.path.getsize(event.src_path)
       except OSError:
-        pass  # File might be gone already
+        pass  # file might be gone already
 
       self._write_log_entry("NEW", event.src_path)
 
@@ -55,7 +55,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
     if not event.is_directory:
 
-      # Fix: Track file sizes to prevent duplicate CHANGED events
+      # Fix: prevent duplicates (see dev.md)
       try:
         new_size = os.path.getsize(event.src_path)
         old_size = self.file_sizes.get(event.src_path)
@@ -76,7 +76,7 @@ class FileChangeHandler( FileSystemEventHandler ):
   def on_moved( self, event ):
 
     if not event.is_directory:
-      # Fix: Track file sizes to prevent duplicate CHANGED events
+      # Fix: prevent duplicates (see dev.md)
       try:
         self.file_sizes[event.dest_path] = os.path.getsize(event.dest_path)
       except OSError:
@@ -84,8 +84,8 @@ class FileChangeHandler( FileSystemEventHandler ):
       self.file_sizes.pop(event.src_path, None)
       
       if os.path.dirname(event.src_path) == os.path.dirname(event.dest_path):
-        self._write_log_entry("RENAMED", event.src_path, event.dest_path)  # Same dir = rename
-      else:  # TASK: MOVED doesn't work on win
+        self._write_log_entry("RENAMED", event.src_path, event.dest_path)  # same dir = rename
+      else:  # doesn't work on win (maybe on linux, fix see dev.md)
         self._write_log_entry("MOVED", event.src_path, event.dest_path)    # different dir = move
 
   def _format_path( self, path ):
