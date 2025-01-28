@@ -14,18 +14,17 @@ class FileChangeHandler( FileSystemEventHandler ):
 
     self.log_file        = log_file
     self.max_path_length = max_path_length
-    self.file_sizes      = {}    # fix: prevent duplicate CHANGED events (see dev.md)
-    self.last_delete     = None  # fix: MOVED doesn't work (see dev.md)
+    self.file_sizes      = {}    # fix: prevent duplicate CHANGED events (see dev.md): skip same file wit samme size
+    self.last_delete     = None  # fix: MOVED doesn't work (see dev.md): Merge DELETE NEW entries in single MOVED by same file name and size  (see dev.md)
     
-    # Load config
     self.config = configparser.ConfigParser()
+
     try:
       self.config.read('config.ini')
       self.max_log_lines = int(self.config['Archive']['max_log_lines'])
       self.archive_folder = self.config['Archive']['archive_folder']
     except:
-      # Default values if config file not found or invalid
-      self.max_log_lines = 100
+      self.max_log_lines = 100  # default
       self.archive_folder = 'archive'
     
   def on_created( self, event ):
@@ -35,11 +34,10 @@ class FileChangeHandler( FileSystemEventHandler ):
       try:
 
         # Fix: MOVED doesn't work (see dev.md)
-
         # when a NEW file has the same name and size as the last DELETED
         # from log replace the log entry with a MOVE
 
-        new_size = os.path.getsize(event.src_path)  # also for fix: prevent duplicate CHANGED events (see dev.md)
+        new_size = os.path.getsize(event.src_path)  # for fix: prevent duplicate CHANGED events (see dev.md)
         self.file_sizes[event.src_path] = new_size
 
         if self.last_delete:
@@ -99,10 +97,12 @@ class FileChangeHandler( FileSystemEventHandler ):
     if not event.is_directory:
 
       # Fix: prevent duplicate CHANGED events (see dev.md)
+
       try:
         self.file_sizes[event.dest_path] = os.path.getsize(event.dest_path)
       except OSError:
         pass
+
       self.file_sizes.pop(event.src_path, None)
       
       if os.path.dirname(event.src_path) == os.path.dirname(event.dest_path):
@@ -120,6 +120,7 @@ class FileChangeHandler( FileSystemEventHandler ):
     date_time = now.strftime("%m%d %H:%M")
     
     src_path_formatted = self._format_path(src_path)
+    
     if dest_path:
       dest_path_formatted = self._format_path(dest_path)
       entry = f"{day}  {date_time}  {event_type:<8}  {src_path_formatted}  -->  {dest_path_formatted}\n"
@@ -145,11 +146,12 @@ class FileChangeHandler( FileSystemEventHandler ):
     """Replace the last log entry with a new one"""
 
     try:
+
       with open(self.log_file, 'r') as f:
         lines = f.readlines()
       
       if len(lines) > 1:
-        content = ''.join(lines[1:])  # Keep all but first line
+        content = ''.join(lines[1:])       # keep all but first line
       else:
         content = ""
 
@@ -163,6 +165,7 @@ class FileChangeHandler( FileSystemEventHandler ):
       
       with open(self.log_file, 'w') as f:
         f.write(entry + content)
+    
     except (IOError, IndexError):
       # If we can't read/write the log file, fall back to normal write
       self._write_log_entry(event_type, src_path, dest_path)
@@ -172,6 +175,7 @@ class FileChangeHandler( FileSystemEventHandler ):
     """Format path to have a maximum length, adding ... at the start if needed"""
     
     path_str = str(path)
+
     if len(path_str) <= self.max_path_length:
       return path_str
     return f"...{path_str[-(self.max_path_length-3):]}"
@@ -219,6 +223,7 @@ def monitor_directory( path, log_file ):
     observer.stop()
     print("\nMonitoring stopped")
   observer.join()
+
 
 if __name__ == "__main__":
 
