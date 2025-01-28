@@ -1,5 +1,7 @@
 # File sys changes
 
+edit start.bat, move in win startup
+
 ```
 Su  0126 11:04  NEW      .../my/sub/fld/file.txt
 Su  0126 11:03  CHANGED  .../my/sub/fld/file.txt

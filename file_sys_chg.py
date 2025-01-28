@@ -55,7 +55,7 @@ class FileChangeHandler( FileSystemEventHandler ):
         new_size = os.path.getsize(event.src_path)
         old_size = self.file_sizes.get(event.src_path)
         
-        # Fix: prevent duplicate CHANGED events (see dev.md)
+        # Fix: prevent duplicate CHANGED events (see dev.md) 
         # only log if size changed or we haven't seen this file before
         if old_size is None or new_size != old_size:
           self._write_log_entry("CHANGED", event.src_path)
