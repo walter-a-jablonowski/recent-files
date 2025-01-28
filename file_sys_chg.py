@@ -197,7 +197,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
 def observe_directory( path, log_file ):
 
-  """Start observeing a dir for changes"""
+  """Start observing a dir for changes"""
 
   abs_path     = os.path.abspath(path)
   abs_log_file = os.path.abspath(log_file)
@@ -221,7 +221,7 @@ def observe_directory( path, log_file ):
       time.sleep(1)
   except KeyboardInterrupt:
     observer.stop()
-    print("\nobserveing stopped")
+    print("\nobserving stopped")
   observer.join()
 
 
