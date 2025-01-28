@@ -195,11 +195,11 @@ class FileChangeHandler( FileSystemEventHandler ):
       f.write(''.join(content[len(content)//2:]))  # archive second (older) half
 
 
-def monitor_directory( path, log_file ):
+def observe_directory( path, log_file ):
 
-  """Start monitoring a dir for changes"""
+  """Start observeing a dir for changes"""
 
-  abs_path = os.path.abspath(path)
+  abs_path     = os.path.abspath(path)
   abs_log_file = os.path.abspath(log_file)
   
   if not os.path.exists(abs_path):  # ensure the base directory exists
@@ -221,7 +221,7 @@ def monitor_directory( path, log_file ):
       time.sleep(1)
   except KeyboardInterrupt:
     observer.stop()
-    print("\nMonitoring stopped")
+    print("\nobserveing stopped")
   observer.join()
 
 
@@ -231,4 +231,4 @@ if __name__ == "__main__":
     print("Usage: python file_sys_chg.py <dir> <log_file>")
     sys.exit(1)
     
-  monitor_directory(sys.argv[1], sys.argv[2])
+  observe_directory(sys.argv[1], sys.argv[2])
