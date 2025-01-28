@@ -16,6 +16,7 @@
 Advanced
 ---------------------------------------------------------
 
+- [ ] looks like duplicate DELETE when using with gd
 - [ ] less information: a liitle abstract to reduce the overhead
 
   - only watch fils an flds twith certain string in name (1 -)
