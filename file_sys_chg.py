@@ -14,7 +14,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
     self.log_file = log_file
     self.max_path_length = max_path_length
-    self.log_entries = []  # List of dicts containing {time, event_type, path, target_path, size}
+    self.log_entries = []  # List of dicts containing last 10 see write_log_entry {time, event_type, path, target_path, size}
     
     self.config = configparser.ConfigParser()
 
@@ -69,7 +69,7 @@ class FileChangeHandler( FileSystemEventHandler ):
           # Skip if this is a CHANGED event right after a RENAME/MOVE for the same file
           if self.log_entries and len(self.log_entries) > 0:
             last_entry = self.log_entries[-1]
-            if (last_entry['event_type'] in ['RENAMED', 'MOVED'] and 
+            if( last_entry['event_type'] in ['RENAMED', 'MOVED'] and 
                 last_entry['target_path'] and 
                 os.path.abspath(event.src_path) == os.path.abspath(last_entry['target_path'])):
               return
@@ -129,8 +129,13 @@ class FileChangeHandler( FileSystemEventHandler ):
       else:
         self._write_log_entry("MOVED", event.src_path, dest_path=event.dest_path, size=file_size)
 
+
+  # Helper
+
   def _is_duplicate_event( self, event_type, path, target_path=None ):
+
     """Check if this event is a duplicate of the last entry"""
+
     if not self.log_entries:
       return False
       
@@ -140,6 +145,7 @@ class FileChangeHandler( FileSystemEventHandler ):
             last_entry['target_path'] == target_path)
 
   def _write_log_entry( self, event_type, src_path, dest_path=None, size=None ):
+
     """Write a log entry to the beginning of the file and update in-memory log"""
 
     now = datetime.now()
@@ -182,6 +188,7 @@ class FileChangeHandler( FileSystemEventHandler ):
       self.log_entries.pop(0)
 
   def _replace_last_entry( self, event_type, src_path, dest_path ):
+
     """Replace the last log entry with a new one"""
 
     try:
@@ -197,7 +204,7 @@ class FileChangeHandler( FileSystemEventHandler ):
       day = now.strftime("%a")[:2]
       date_time = now.strftime("%m%d %H:%M")
       
-      src_path_formatted = self._format_path(src_path)
+      src_path_formatted  = self._format_path(src_path)
       dest_path_formatted = os.path.basename(dest_path) if event_type == "RENAMED" else self._format_path(dest_path)
       entry = f"{day}  {date_time}  {event_type:<8}  {src_path_formatted}  -->  {dest_path_formatted}\n"
       
@@ -212,7 +219,7 @@ class FileChangeHandler( FileSystemEventHandler ):
           'event_type': event_type,
           'path': src_path,
           'target_path': dest_path,
-          'size': last_entry['size']  # Preserve the size from DELETE event
+          'size': last_entry['size']  # preserve the size from DELETE event
         }
     
     except (IOError, IndexError):
@@ -243,6 +250,8 @@ class FileChangeHandler( FileSystemEventHandler ):
     with open(archive_file, 'w') as f:
       f.write(''.join(content[len(content)//2:]))  # archive second (older) half
 
+
+# App
 
 def observe_directory( path, log_file ):
 
