@@ -16,23 +16,14 @@
 Advanced
 ---------------------------------------------------------
 
-- [ ] can we ask AI to somehow clean up the implementation a bit witout destrying functionality?
+- [ ] less information: a liitle abstract to reduce the overhead
+
+  - only watch fils an flds twith certain string in name (1 -)
+
 - [ ] see TASKS
+
+- [ ] can we ask AI to somehow clean up the implementation a bit witout destrying functionality?
 - [ ] maybe Python Code to a Standalone APK
-
-### Problem with duplicate log entries
-
-see [../dev](-this.md)
-
-- [ ] Instead of comparing file sizes to filter out duplicate log entries we could use hash (more precise)
-- [ ] also remember betweenn runs (maybe unneeded unless we have similar problems)
-
-  - json in app folder (sqlite cause of performance ?)
-  - .sys/fil_chgs/duplicates_cache.json
-  - less good (unreadable)
-    ```
-    Su  0126 11:04  NEW      .../file.txt  [size:1234]  source: c:/full/.../...
-    ```
 
 ### C++ variant if needed for performance
 
