@@ -41,7 +41,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
   def on_created( self, event ):
 
-    if not event.is_directory:
+    if not event.is_directory:  # currently fil only
 
       # Fix: prevent duplicates (see dev.md)
       try:
@@ -70,12 +70,14 @@ class FileChangeHandler( FileSystemEventHandler ):
   def on_deleted( self, event ):
 
     if not event.is_directory:
+
       self.file_sizes.pop(event.src_path, None)  # remove from tracking
       self._write_log_entry("DELETE", event.src_path)
 
   def on_moved( self, event ):
 
     if not event.is_directory:
+
       # Fix: prevent duplicates (see dev.md)
       try:
         self.file_sizes[event.dest_path] = os.path.getsize(event.dest_path)
