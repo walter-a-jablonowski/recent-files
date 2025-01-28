@@ -5,7 +5,7 @@ edit start.bat, move in win startup
 ```
 Su  0126 11:04  NEW      .../my/sub/fld/file.txt
 Su  0126 11:03  CHANGED  .../my/sub/fld/file.txt
-Su  0126 11:02  RENAMED  .../my/sub/fld/file.txt  -->  .../my/sub/fld/file1.txt
+Su  0126 11:02  RENAMED  .../my/sub/fld/file.txt  -->  file1.txt
 Su  0126 11:01  MOVED    .../my/sub/fld/file.txt  -->  .../my/sub2/fld/file.txt
 Su  0126 11:00  DELETE   .../my/sub/fld/file.txt
 ```

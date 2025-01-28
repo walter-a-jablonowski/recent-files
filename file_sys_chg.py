@@ -122,7 +122,7 @@ class FileChangeHandler( FileSystemEventHandler ):
     src_path_formatted = self._format_path(src_path)
     
     if dest_path:
-      dest_path_formatted = self._format_path(dest_path)
+      dest_path_formatted = os.path.basename(dest_path) if event_type == "RENAMED" else self._format_path(dest_path)
       entry = f"{day}  {date_time}  {event_type:<8}  {src_path_formatted}  -->  {dest_path_formatted}\n"
     else:
       entry = f"{day}  {date_time}  {event_type:<8}  {src_path_formatted}\n"
@@ -160,7 +160,7 @@ class FileChangeHandler( FileSystemEventHandler ):
       date_time = now.strftime("%m%d %H:%M")
       
       src_path_formatted  = self._format_path(src_path)
-      dest_path_formatted = self._format_path(dest_path)
+      dest_path_formatted = os.path.basename(dest_path) if event_type == "RENAMED" else self._format_path(dest_path)
       entry = f"{day}  {date_time}  {event_type:<8}  {src_path_formatted}  -->  {dest_path_formatted}\n"
       
       with open(self.log_file, 'w') as f:
