@@ -38,20 +38,11 @@ class FileChangeHandler( FileSystemEventHandler ):
           if( new_name == old_name and
               new_size == self.last_delete['size']):
             
-            try:
-              with open(self.log_file, 'r') as f:
-                first_line = f.readline().strip()
-                
-              if first_line and "DELETE" in first_line and old_name in first_line:
-                self._replace_last_entry("MOVED", self.last_delete['path'], event.src_path)
-                self.last_delete = None
-                return
+            self._replace_last_entry("MOVED", self.last_delete['path'], event.src_path)
+            self.last_delete = None
+            return
 
-            except (IOError, IndexError):
-              pass  # if we can't read the log file, proceed with NEW entry
-        
         # regular NEW event
-
         self._write_log_entry("NEW", event.src_path)
 
       except OSError:  # for fix: prevent duplicate CHANGED events (see dev.md)
