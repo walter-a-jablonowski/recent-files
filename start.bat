@@ -6,7 +6,7 @@ if not exist "file_sys_chg.py" (
   exit /b 1
 )
 
-python "file_sys_chg.py" "G:\fld with\blanks" "G:\fld with\blanks\recent_files.log"
+start /min python "file_sys_chg.py" "G:\fld with\blanks" "G:\fld with\blanks\recent_files.log"
 if errorlevel 1 (
   echo Error running Python script
   pause
