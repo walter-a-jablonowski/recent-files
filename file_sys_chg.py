@@ -23,13 +23,22 @@ class FileChangeHandler( FileSystemEventHandler ):
       self.config.read('config.ini')
       self.max_log_lines = int(self.config['Archive']['max_log_lines'])
       self.archive_folder = self.config['Archive']['archive_folder']
+      self.ignored_files = [f.strip() for f in self.config.get('Ignore', 'files', fallback='').split(',')]
     except:
       self.max_log_lines = 100  # default
       self.archive_folder = 'archive'
-    
+      self.ignored_files = []
+
+  def _should_ignore( self, path ):
+
+    """Check if the file should be ignored based on config"""
+
+    filename = os.path.basename(path)
+    return filename in self.ignored_files
+
   def on_created( self, event ):
 
-    if not event.is_directory:   # currently fil only
+    if not event.is_directory and not self._should_ignore(event.src_path):   # currently fil only
 
       try:
 
@@ -59,7 +68,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
   def on_modified( self, event ):
 
-    if not event.is_directory:
+    if not event.is_directory and not self._should_ignore(event.src_path):
 
       try:
         new_size = os.path.getsize(event.src_path)
@@ -76,7 +85,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
   def on_deleted( self, event ):
 
-    if not event.is_directory:
+    if not event.is_directory and not self._should_ignore(event.src_path):
 
       try:  # TASK: unsure
         file_size = os.path.getsize(event.src_path)
@@ -94,7 +103,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
   def on_moved( self, event ):
 
-    if not event.is_directory:
+    if not event.is_directory and not (self._should_ignore(event.src_path) or self._should_ignore(event.dest_path)):
 
       # Fix: prevent duplicate CHANGED events (see dev.md)
 
