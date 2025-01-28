@@ -1,5 +1,20 @@
 
-Fix: MOVE doesn't work instead a DELETE NEW is logged
+Fix: Prevent duplicate CHANGED events
+----------------------------------------------------------
+
+On win events appear as duplicate
+
+AI: When you rename a file, it typically triggers 2 events
+
+- A MOVED/RENAMED event (which we handle as RENAMED in our code)
+- A MODIFIED event (which we handle as CHANGED in our code)
+
+The MODIFIED event occurs because many file systems update certain metadata (like last modified time) when a file is renamed, even though the content hasn't changed. This is particularly common on Windows systems
+
+Solution: currently track file sizes and skip duplicates (alternative: hash)
+
+
+Fix: MOVED doesn't work instead a DELETE NEW is logged
 ----------------------------------------------------------
 
 On win this doen't work
@@ -20,18 +35,3 @@ Tu  0128 02:45  DELETE    ...l-sys-chg\debug\subfolder\sample1.txt
 ```
 
 Solution: Merge 2 entries to MOVE
-
-
-Fix: Prevent duplicate CHANGED events
-----------------------------------------------------------
-
-On win events appear as duplicate
-
-AI: When you rename a file, it typically triggers 2 events
-
-- A MOVED/RENAMED event (which we handle as RENAMED in our code)
-- A MODIFIED event (which we handle as CHANGED in our code)
-
-The MODIFIED event occurs because many file systems update certain metadata (like last modified time) when a file is renamed, even though the content hasn't changed. This is particularly common on Windows systems
-
-Solution: currently track file sizes (alternative: hash)

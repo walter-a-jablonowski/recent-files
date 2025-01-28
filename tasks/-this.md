@@ -5,7 +5,7 @@
   - [x] maybe compare file size doesn't change, change it in file, json or .sys
     - In-Memory Dictionary `self.file_sizes = {}  # path -> size`
 
-- [ ] MOVE doesn't work instead a DELETE NEW is logged
+- [x] MOVE doesn't work instead a DELETE NEW is logged
 
     - solved the simple way (undone)
     - maybe event simpler: just merge log entries if DELETE NEW with same file name appear in log
