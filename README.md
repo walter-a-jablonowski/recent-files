@@ -1,7 +1,5 @@
 # File sys changes
 
-edit start.bat, move in win startup
-
 ```
 Su  0126 11:04  NEW      .../my/sub/fld/file.txt
 Su  0126 11:03  CHANGED  .../my/sub/fld/file.txt
@@ -10,20 +8,25 @@ Su  0126 11:01  MOVED    .../my/sub/fld/file.txt  -->  .../my/sub2/fld/file.txt
 Su  0126 11:00  DELETE   .../my/sub/fld/file.txt
 ```
 
-- currently only file no dir changes
+## Version
 
-## Requirements
+- **0.1.0** Track all files
+  - currently only file no dir changes
+
+## Usage
+
+Requirements
 
 - Python 3.x
 - watchdog 3.0.0
 
-## Usage
-
 ```bash
 pip install -r requirements.txt
 python file_sys_chg.py <base_dir> <log_file>
-python file_sys_chg.py "debug" "file_changes.log"  # exit CRL C
+python file_sys_chg.py "debug" "file_changes.log" 
 ```
+
+see [start.bat](start.bat), move in win startup
 
 ## Dev
 
