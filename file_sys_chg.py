@@ -6,6 +6,7 @@ from datetime import datetime
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 from pathlib import Path
+import configparser
 
 class FileChangeHandler( FileSystemEventHandler ):
 
@@ -15,6 +16,17 @@ class FileChangeHandler( FileSystemEventHandler ):
     self.max_path_length = max_path_length
     self.file_sizes      = {}    # fix: prevent duplicate CHANGED events (see dev.md)
     self.last_delete     = None  # fix: MOVED doesn't work (see dev.md)
+    
+    # Load config
+    self.config = configparser.ConfigParser()
+    try:
+      self.config.read('config.ini')
+      self.max_log_lines = int(self.config['Archive']['max_log_lines'])
+      self.archive_folder = self.config['Archive']['archive_folder']
+    except:
+      # Default values if config file not found or invalid
+      self.max_log_lines = 100
+      self.archive_folder = 'archive'
     
   def on_created( self, event ):
 
@@ -98,6 +110,7 @@ class FileChangeHandler( FileSystemEventHandler ):
       else:  # doesn't work on win (maybe on linux, fix see dev.md)
         self._write_log_entry("MOVED", event.src_path, event.dest_path)    # different dir = move
 
+
   def _write_log_entry( self, event_type, src_path, dest_path = None ):
 
     """Write a log entry to the beginning of the file"""
@@ -115,12 +128,17 @@ class FileChangeHandler( FileSystemEventHandler ):
       
     try:
       with open(self.log_file, 'r') as f:
-        content = f.read()
+        content = f.readlines()
     except FileNotFoundError:
-      content = ""
+      content = []
+      
+    # Check if we need to archive
+    if len(content) >= self.max_log_lines:
+      self._archive_log_entries(content)
+      content = content[:len(content)//2]  # keep first (newer) half of the lines
       
     with open(self.log_file, 'w') as f:
-      f.write(entry + content)
+      f.write( entry + ''.join(content))
 
   def _replace_last_entry( self, event_type, src_path, dest_path ):
 
@@ -157,6 +175,21 @@ class FileChangeHandler( FileSystemEventHandler ):
     if len(path_str) <= self.max_path_length:
       return path_str
     return f"...{path_str[-(self.max_path_length-3):]}"
+
+  def _archive_log_entries( self, content ):
+
+    """Archive the older half of log entries to a timestamped file"""
+    
+    watch_dir    = os.path.dirname( os.path.abspath(self.log_file))
+    archive_path = os.path.join( watch_dir, self.archive_folder)
+    os.makedirs(archive_path, exist_ok=True)
+    
+    timestamp    = datetime.now().strftime("%Y%m%d_%H%M%S")
+    archive_file = os.path.join(archive_path, f"{timestamp}.txt")
+    
+    with open(archive_file, 'w') as f:
+      f.write(''.join(content[len(content)//2:]))  # archive second (older) half
+
 
 def monitor_directory( path, log_file ):
 

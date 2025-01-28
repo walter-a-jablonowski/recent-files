@@ -10,7 +10,7 @@
     - solved the simple way (undone)
     - maybe event simpler: just merge log entries if DELETE NEW with same file name appear in log
 
-- [ ] Shorten log file if too long
+- [x] Shorten log file if too long
 
 
 Advanced
