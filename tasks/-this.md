@@ -20,12 +20,7 @@ Advanced
 
 ### Problem with duplicate log entries
 
-AI: When you rename a file, it typically triggers 2 events
-
-- A MOVED/RENAMED event (which we handle as RENAMED in our code)
-- A MODIFIED event (which we handle as CHANGED in our code)
-
-The MODIFIED event occurs because many file systems update certain metadata (like last modified time) when a file is renamed, even though the content hasn't changed. This is particularly common on Windows systems
+see [dev](-this.md)
 
 - [ ] Instead of comparing file sizes to filter out duplicate log entries we could use hash (more precise)
 - [ ] also remember betweenn runs (maybe unneeded unless we have similar problems)

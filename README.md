@@ -8,6 +8,8 @@ Su  0126 11:01  MOVED    .../my/sub/fld/file.txt  -->  .../my/sub2/fld/file.txt
 Su  0126 11:00  DELETE   .../my/sub/fld/file.txt
 ```
 
+- currently only file no dir changes
+
 ## Requirements
 
 - Python 3.x
@@ -21,6 +23,9 @@ python file_sys_chg.py <base_dir> <log_file>
 python file_sys_chg.py "debug" "file_changes.log"  # exit CRL C
 ```
 
+## Dev
+
+see [dev](tasks/dev.md)
 
 ## License
 
