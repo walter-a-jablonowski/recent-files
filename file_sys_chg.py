@@ -25,7 +25,7 @@ class FileChangeHandler( FileSystemEventHandler ):
       self.archive_folder = self.config['Archive']['archive_folder']
       self.ignored_files = [f.strip() for f in self.config.get('Ignore', 'files', fallback='').split(',')]
     except:
-      self.max_log_lines = 100  # default
+      self.max_log_lines = 100   # default
       self.archive_folder = 'archive'
       self.ignored_files = []
 
