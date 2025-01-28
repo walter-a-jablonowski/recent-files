@@ -10,8 +10,9 @@ Su  0126 11:00  DELETE   .../my/sub/fld/file.txt
 
 ## Version
 
-- **0.1.0** Track all files
+- **0.1.0** Observes all files
   - currently only file no dir changes
+  - some duplicates may appear in log
 
 ## Usage
 
