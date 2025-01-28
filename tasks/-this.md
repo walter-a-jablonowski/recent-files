@@ -16,6 +16,7 @@
 Advanced
 ---------------------------------------------------------
 
+- [ ] can we ask AI to somehow clean up the implementation a bit witout destrying functionality?
 - [ ] maybe Python Code to a Standalone APK
 
 ### Problem with duplicate log entries

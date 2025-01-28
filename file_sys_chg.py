@@ -27,16 +27,15 @@ class FileChangeHandler( FileSystemEventHandler ):
         # when a NEW file has the same name and size as the last DELETED
         # from log replace the log entry with a MOVE
 
-        new_size = os.path.getsize(event.src_path)  # for fix: prevent duplicate CHANGED events (see dev.md)
+        new_size = os.path.getsize(event.src_path)  # also for fix: prevent duplicate CHANGED events (see dev.md)
         self.file_sizes[event.src_path] = new_size
 
         if self.last_delete:
 
-          new_name = os.path.basename(event.src_path)
-          old_name = os.path.basename(self.last_delete['path'])
+          new_name = os.path.basename( event.src_path)
+          old_name = os.path.basename( self.last_delete['path'])
           
-          if( new_name == old_name and
-              new_size == self.last_delete['size']):
+          if( new_name == old_name and new_size == self.last_delete['size']):
             
             self._replace_last_entry("MOVED", self.last_delete['path'], event.src_path)
             self.last_delete = None
@@ -52,15 +51,16 @@ class FileChangeHandler( FileSystemEventHandler ):
 
     if not event.is_directory:
 
-      # Fix: prevent duplicate CHANGED events (see dev.md)
       try:
         new_size = os.path.getsize(event.src_path)
         old_size = self.file_sizes.get(event.src_path)
         
+        # Fix: prevent duplicate CHANGED events (see dev.md)
         # only log if size changed or we haven't seen this file before
         if old_size is None or new_size != old_size:
           self._write_log_entry("CHANGED", event.src_path)
           self.file_sizes[event.src_path] = new_size
+
       except OSError:
         pass  # file might be gone already
 
@@ -68,7 +68,7 @@ class FileChangeHandler( FileSystemEventHandler ):
 
     if not event.is_directory:
 
-      try:  # fix: MOVED doesn't work (see dev.md)
+      try:  # TASK: unsure
         file_size = os.path.getsize(event.src_path)
       except OSError:
         file_size = self.file_sizes.get(event.src_path)
