@@ -196,7 +196,7 @@ class FileChangeHandler( FileSystemEventHandler ):
         lines = f.readlines()
       
       if len(lines) > 1:
-        content = ''.join(lines[1:])  # Keep all but first line
+        content = ''.join(lines[1:])  # keep all but first line
       else:
         content = ""
 
