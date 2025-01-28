@@ -13,6 +13,8 @@ Su  0126 11:00  DELETE   .../my/sub/fld/file.txt
 - **0.1.0** Observes all files
   - currently only file no dir changes
   - some duplicates may appear in log
+- **Current**
+  - also observe dir changes
 
 ## Usage
 

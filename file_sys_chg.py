@@ -38,27 +38,33 @@ class FileChangeHandler( FileSystemEventHandler ):
 
   def on_created( self, event ):
 
-    if not event.is_directory and not self._should_ignore(event.src_path):   # currently fil only
-
+    if not self._should_ignore(event.src_path):
       try:
-
         # Fix: MOVED doesn't work (see dev.md)
-        # when a NEW file has the same name and size as the last DELETED
+        # when a NEW file/directory has the same name and size as the last DELETED
         # from log replace the log entry with a MOVE
 
-        new_size = os.path.getsize(event.src_path)  # for fix: prevent duplicate CHANGED events (see dev.md)
-        self.file_sizes[event.src_path] = new_size
-
-        if self.last_delete:
-
-          new_name = os.path.basename( event.src_path)
-          old_name = os.path.basename( self.last_delete['path'])
-          
-          if( new_name == old_name and new_size == self.last_delete['size']):
+        if event.is_directory:
+          if self.last_delete:
+            new_name = os.path.basename(event.src_path)
+            old_name = os.path.basename(self.last_delete['path'])
             
-            self._replace_last_entry("MOVED", self.last_delete['path'], event.src_path)
-            self.last_delete = None
-            return
+            if new_name == old_name:
+              self._replace_last_entry("MOVED", self.last_delete['path'], event.src_path)
+              self.last_delete = None
+              return
+        else:
+          new_size = os.path.getsize(event.src_path)  # for fix: prevent duplicate CHANGED events (see dev.md)
+          self.file_sizes[event.src_path] = new_size
+
+          if self.last_delete:
+            new_name = os.path.basename(event.src_path)
+            old_name = os.path.basename(self.last_delete['path'])
+            
+            if new_name == old_name and (event.is_directory or new_size == self.last_delete['size']):
+              self._replace_last_entry("MOVED", self.last_delete['path'], event.src_path)
+              self.last_delete = None
+              return
 
         # regular NEW event
         self._write_log_entry("NEW", event.src_path)
@@ -68,31 +74,31 @@ class FileChangeHandler( FileSystemEventHandler ):
 
   def on_modified( self, event ):
 
-    if not event.is_directory and not self._should_ignore(event.src_path):
+    if not self._should_ignore(event.src_path):
+      if not event.is_directory:  # only track CHANGED for files, not directories
+        try:
+          new_size = os.path.getsize(event.src_path)
+          old_size = self.file_sizes.get(event.src_path)
+          
+          # Fix: prevent duplicate CHANGED events (see dev.md) 
+          # only log if size changed or we haven't seen this file before
+          if old_size is None or new_size != old_size:
+            self._write_log_entry("CHANGED", event.src_path)
+            self.file_sizes[event.src_path] = new_size
 
-      try:
-        new_size = os.path.getsize(event.src_path)
-        old_size = self.file_sizes.get(event.src_path)
-        
-        # Fix: prevent duplicate CHANGED events (see dev.md) 
-        # only log if size changed or we haven't seen this file before
-        if old_size is None or new_size != old_size:
-          self._write_log_entry("CHANGED", event.src_path)
-          self.file_sizes[event.src_path] = new_size
-
-      except OSError:
-        pass  # file might be gone already
+        except OSError:
+          pass  # file might be gone already
 
   def on_deleted( self, event ):
 
-    if not event.is_directory and not self._should_ignore(event.src_path):
-
+    if not self._should_ignore(event.src_path):
       try:  # TASK: unsure
-        file_size = os.path.getsize(event.src_path)
+        file_size = os.path.getsize(event.src_path) if not event.is_directory else None
       except OSError:
         file_size = self.file_sizes.get(event.src_path)
 
-      self.file_sizes.pop(event.src_path, None)  # remove from tracking
+      if not event.is_directory:
+        self.file_sizes.pop(event.src_path, None)  # remove from tracking
       
       self.last_delete = {  # fix: MOVED doesn't work (see dev.md)
         'path': event.src_path,
@@ -103,16 +109,15 @@ class FileChangeHandler( FileSystemEventHandler ):
 
   def on_moved( self, event ):
 
-    if not event.is_directory and not (self._should_ignore(event.src_path) or self._should_ignore(event.dest_path)):
+    if not (self._should_ignore(event.src_path) or self._should_ignore(event.dest_path)):
+      if not event.is_directory:
+        # Fix: prevent duplicate CHANGED events (see dev.md)
+        try:
+          self.file_sizes[event.dest_path] = os.path.getsize(event.dest_path)
+        except OSError:
+          pass
 
-      # Fix: prevent duplicate CHANGED events (see dev.md)
-
-      try:
-        self.file_sizes[event.dest_path] = os.path.getsize(event.dest_path)
-      except OSError:
-        pass
-
-      self.file_sizes.pop(event.src_path, None)
+        self.file_sizes.pop(event.src_path, None)
       
       if os.path.dirname(event.src_path) == os.path.dirname(event.dest_path):
         self._write_log_entry("RENAMED", event.src_path, event.dest_path)  # same dir = rename
