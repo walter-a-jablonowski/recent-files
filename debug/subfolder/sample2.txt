@@ -1,1 +1,0 @@
-This is a test file 2 in a subfolder for monitoring file system changes.
