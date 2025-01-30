@@ -253,15 +253,15 @@ class FileChangeHandler( FileSystemEventHandler ):
 
 # App
 
-def observe_directory( path, log_file ):
+def observe_dir( path, log_file ):
 
   """Start observing a dir for changes"""
 
   abs_path     = os.path.abspath(path)
   abs_log_file = os.path.abspath(log_file)
   
-  if not os.path.exists(abs_path):  # ensure the base directory exists
-    print(f"Error: Directory '{abs_path}' does not exist")
+  if not os.path.exists(abs_path):  # ensure the base dir exists
+    print(f"Error: dir '{abs_path}' missing")
     sys.exit(1)
     
   event_handler = FileChangeHandler(abs_log_file)
@@ -289,4 +289,4 @@ if __name__ == "__main__":
     print("Usage: python file_sys_chg.py <dir> <log_file>")
     sys.exit(1)
     
-  observe_directory(sys.argv[1], sys.argv[2])
+  observe_dir(sys.argv[1], sys.argv[2])
