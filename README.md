@@ -1,5 +1,9 @@
 # File sys changes
 
+[ DEPRECATED ] This was replaced by recent-files-2
+
+-----------
+
 ```
 Su  0126 11:04  NEW      .../my/sub/fld/file.txt
 Su  0126 11:03  CHANGED  .../my/sub/fld/file.txt
